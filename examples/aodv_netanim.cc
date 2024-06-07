@@ -68,16 +68,20 @@ int main(int argc, char **argv)
   mobility.SetMobilityModel ("ns3::RandomWalk2dMobilityModel",
                              "Bounds", RectangleValue (Rectangle (-50, 50, -25, 50)));
   mobility.Install (nodes);
-  
+ 
   WifiMacHelper wifiMac;
-  wifiMac.SetType ("ns3::AdhocWifiMac");
+  wifiMac.SetType("ns3::AdhocWifiMac");
   YansWifiPhyHelper wifiPhy;
-  YansWifiChannelHelper wifiChannel;
-  wifiPhy.SetChannel (wifiChannel.Create ());
+  YansWifiChannelHelper wifiChannel = YansWifiChannelHelper::Default();
+  wifiPhy.SetChannel(wifiChannel.Create());
   WifiHelper wifi;
-  wifi.SetRemoteStationManager ("ns3::ConstantRateWifiManager", "DataMode", StringValue ("OfdmRate6Mbps"), "RtsCtsThreshold", UintegerValue (0));
-  devices = wifi.Install (wifiPhy, wifiMac, nodes); 
-  
+  wifi.SetRemoteStationManager("ns3::ConstantRateWifiManager",
+                                 "DataMode",
+                                 StringValue("OfdmRate6Mbps"),
+                                 "RtsCtsThreshold",
+                                 UintegerValue(0));
+  devices = wifi.Install(wifiPhy, wifiMac, nodes);
+
   AodvHelper aodv;
   InternetStackHelper stack;
   stack.SetRoutingHelper (aodv); 
