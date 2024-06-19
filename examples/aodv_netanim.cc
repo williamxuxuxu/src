@@ -104,8 +104,6 @@ int main(int argc, char **argv)
   address.SetBase ("10.0.0.0", "255.0.0.0");
   interfaces = address.Assign (devices);
   
-  Ipv4GlobalRoutingHelper::PopulateRoutingTables ();
-  
   TypeId tid = TypeId::LookupByName ("ns3::UdpSocketFactory");
   Ptr<Socket> recvSink = Socket::CreateSocket (nodes.Get (size-1), tid);
   InetSocketAddress local = InetSocketAddress (Ipv4Address::GetAny (), 8080);
