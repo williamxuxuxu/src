@@ -7,6 +7,8 @@
 #include "ns3/applications-module.h"
 #include "ns3/netanim-module.h"
 #include "ns3/flow-monitor-module.h"
+#include "ns3/ping-helper.h"
+
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -65,9 +67,21 @@ int main(int argc, char **argv)
   nodes.Create (size);
   
   MobilityHelper mobility;
-  mobility.SetMobilityModel ("ns3::RandomWalk2dMobilityModel",
-                             "Bounds", RectangleValue (Rectangle (-50, 50, -25, 50)));
-  mobility.Install (nodes);
+  mobility.SetPositionAllocator("ns3::GridPositionAllocator",
+                                  "MinX",
+                                  DoubleValue(0.0),
+                                  "MinY",
+                                  DoubleValue(0.0),
+                                  "DeltaX",
+                                  DoubleValue(1),
+                                  "DeltaY",
+                                  DoubleValue(1),
+                                  "GridWidth",
+                                    UintegerValue(10),
+                                  "LayoutType",
+                                  StringValue("RowFirst"));
+  mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
+  mobility.Install(nodes);
  
   WifiMacHelper wifiMac;
   wifiMac.SetType("ns3::AdhocWifiMac");
@@ -102,7 +116,24 @@ int main(int argc, char **argv)
   InetSocketAddress remote = InetSocketAddress (interfaces.GetAddress (size-1,0), 8080);
   source->Connect (remote);
   
+  PingHelper ping(interfaces.GetAddress(size - 1));
+  ping.SetAttribute("VerboseMode", EnumValue(Ping::VerboseMode::VERBOSE));
+
+  ApplicationContainer p = ping.Install(nodes.Get(0));
+  p.Start(Seconds(0));
+  p.Stop(Seconds(totalTime) - Seconds(0.001));
+
+  // move node away
+  Ptr<Node> mov_node = nodes.Get(size / 2);
+  Ptr<MobilityModel> mob = mov_node->GetObject<MobilityModel>();
+  Simulator::Schedule(Seconds(66),
+                      &MobilityModel::SetPosition,
+                      mob,
+                      Vector(100, 100, 0));
+
   Simulator::Schedule (Seconds (1), &GenerateTraffic, source, packetSize, totalPackets, interPacketInterval);
+
+  Ipv4GlobalRoutingHelper::PopulateRoutingTables ();
                        
   std::cout << "Starting simulation for " << totalTime << " s ...\n";
   AnimationInterface anim ("scratch/aodv-output.xml");
@@ -124,6 +155,7 @@ int main(int argc, char **argv)
   std::cout<<"\n\n***** OUTPUT *****\n\n";
   std::cout<<"Total Packets sent = "<<packetsSent<<std::endl;
   std::cout<<"Total Packets received = "<<packetsReceived<<std::endl;
-  std::cout<<"Packet delivery ratio = "<<(float)(packetsReceived/packetsSent)*100<<" %"<<std::endl;
+  float packetsRatio = ((float) packetsReceived/packetsSent)*100;
+  std::cout<<"Packet delivery ratio = "<<packetsRatio<<" %"<<std::endl;
   
 }
