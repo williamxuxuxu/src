@@ -7,8 +7,6 @@
 #include "ns3/applications-module.h"
 #include "ns3/netanim-module.h"
 #include "ns3/flow-monitor-module.h"
-#include "ns3/ping-helper.h"
-
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -73,11 +71,11 @@ int main(int argc, char **argv)
                                   "MinY",
                                   DoubleValue(0.0),
                                   "DeltaX",
-                                  DoubleValue(1),
+                                  DoubleValue(step),
                                   "DeltaY",
-                                  DoubleValue(1),
+                                  DoubleValue(step),
                                   "GridWidth",
-                                    UintegerValue(10),
+                                    UintegerValue(5),
                                   "LayoutType",
                                   StringValue("RowFirst"));
   mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
@@ -104,6 +102,8 @@ int main(int argc, char **argv)
   address.SetBase ("10.0.0.0", "255.0.0.0");
   interfaces = address.Assign (devices);
   
+  Ipv4GlobalRoutingHelper::PopulateRoutingTables ();
+  
   TypeId tid = TypeId::LookupByName ("ns3::UdpSocketFactory");
   Ptr<Socket> recvSink = Socket::CreateSocket (nodes.Get (size-1), tid);
   InetSocketAddress local = InetSocketAddress (Ipv4Address::GetAny (), 8080);
@@ -114,24 +114,7 @@ int main(int argc, char **argv)
   InetSocketAddress remote = InetSocketAddress (interfaces.GetAddress (size-1,0), 8080);
   source->Connect (remote);
   
-  PingHelper ping(interfaces.GetAddress(size - 1));
-  ping.SetAttribute("VerboseMode", EnumValue(Ping::VerboseMode::VERBOSE));
-
-  ApplicationContainer p = ping.Install(nodes.Get(0));
-  p.Start(Seconds(0));
-  p.Stop(Seconds(totalTime) - Seconds(0.001));
-
-  // move node away
-  Ptr<Node> mov_node = nodes.Get(size / 2);
-  Ptr<MobilityModel> mob = mov_node->GetObject<MobilityModel>();
-  Simulator::Schedule(Seconds(66),
-                      &MobilityModel::SetPosition,
-                      mob,
-                      Vector(100, 100, 0));
-
   Simulator::Schedule (Seconds (1), &GenerateTraffic, source, packetSize, totalPackets, interPacketInterval);
-
-  Ipv4GlobalRoutingHelper::PopulateRoutingTables ();
                        
   std::cout << "Starting simulation for " << totalTime << " s ...\n";
   AnimationInterface anim ("scratch/aodv-output.xml");

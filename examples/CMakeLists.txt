@@ -43,3 +43,22 @@ build_lib_example(
 	${libnetanim}
 )
 
+build_lib_example(
+  NAME aodv_p2p
+  SOURCE_FILES aodv_p2p.cc
+  LIBRARIES_TO_LINK
+    ${libapplications}
+    ${libcore}
+    ${libinternet}
+    ${libnetwork}
+    ${libpoint-to-point}
+	${libcsma}
+	${libmobility}
+	${libnetanim}
+	${libwifi}
+    ${libinternet-apps}
+    ${libflow-monitor}
+    ${libapplications}
+    ${libaodv}
+)
+
