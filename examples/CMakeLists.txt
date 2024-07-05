@@ -60,5 +60,42 @@ build_lib_example(
     ${libflow-monitor}
     ${libapplications}
     ${libaodv}
+    
+)
+
+build_lib_example(
+  NAME aodv_random
+  SOURCE_FILES aodv_random.cc
+  LIBRARIES_TO_LINK
+    ${libcore}
+    ${libpoint-to-point}
+    ${libcsma}
+    ${libwifi}
+    ${libinternet}
+    ${libapplications}
+    ${libaodv}
+    ${libinternet-apps}
+    ${libflow-monitor}
+    ${libnetanim}
+)
+
+build_lib_example(
+  NAME cp_aodv_p2p
+  SOURCE_FILES cp_aodv_p2p.cc
+  LIBRARIES_TO_LINK
+    ${libapplications}
+    ${libcore}
+    ${libinternet}
+    ${libnetwork}
+    ${libpoint-to-point}
+    ${libcsma}
+    ${libmobility}
+    ${libnetanim}
+    ${libwifi}
+    ${libinternet-apps}
+    ${libflow-monitor}
+    ${libapplications}
+    ${libaodv}
+
 )
 
