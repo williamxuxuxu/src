@@ -54,7 +54,7 @@ static void GenerateTraffic (Ptr<Socket> socket, uint32_t pktSize,
 int main (int argc, char *argv[])
 {
   // Create nodes
-  uint32_t size=6;
+  uint32_t size=10;
   double totalTime=10;
   int totalPackets = totalTime-1;
 
@@ -77,7 +77,21 @@ int main (int argc, char *argv[])
     positionAlloc->Add(Vector(i * 10.0, 0.0, 0.0)); // Initial positions with a separation of 20 meters
     mobility.SetPositionAllocator(positionAlloc);
     mobility.SetMobilityModel("ns3::ConstantVelocityMobilityModel");
+/*
+    ObjectFactory pos;
+    pos.SetTypeId("ns3::RandomRectanglePositionAllocator");
+    pos.Set ("X", StringValue ("ns3::UniformRandomVariable[Min=0.0|Max=500.0]"));
+    pos.Set ("Y", StringValue ("ns3::UniformRandomVariable[Min=0.0|Max=500.0]"));
+    Ptr<PositionAllocator> posAlloc = pos.Create()->GetObject<PositionAllocator>();
+    mobility.SetMobilityModel("ns3::RandomWaypointMobilityModel",
+                            "Speed", StringValue ("ns3::UniformRandomVariable[Min=0|Max=60]"),
+                            "Pause", StringValue ("ns3::ConstantRandomVariable[Constant=0.0]"),
+                            "PositionAllocator", PointerValue(posAlloc));
+    mobility.SetPositionAllocator (posAlloc);
+    mobility.Install(node);
+*/
     mobility.Install(groundNodes.Get(i));
+
   }
 
   // Set initial position for UAV

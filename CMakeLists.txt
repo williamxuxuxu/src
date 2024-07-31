@@ -116,6 +116,22 @@ build_lib_example(
 )
 
 build_lib_example(
+  NAME aodv_grid_final_power
+  SOURCE_FILES aodv_grid_final_power.cc
+  LIBRARIES_TO_LINK
+    ${libcore}
+    ${libpoint-to-point}
+    ${libcsma}
+    ${libwifi}
+    ${libinternet}
+    ${libapplications}
+    ${libaodv}
+    ${libinternet-apps}
+    ${libflow-monitor}
+    ${libnetanim}
+)
+
+build_lib_example(
   NAME aodv_random_final
   SOURCE_FILES aodv_random_final.cc
   LIBRARIES_TO_LINK

@@ -53,8 +53,8 @@ int main(int argc, char **argv)
   double totalTime=13;
   int numMove = 12;
   double step = 10;
-  int rowLength = 10;
-//  int maxPower = 10;
+  int rowLength = 10000;
+  int maxPower = 10;
  
   int packetSize = 1024;
   int totalPackets = totalTime-1;
@@ -91,8 +91,8 @@ int main(int argc, char **argv)
   YansWifiChannelHelper wifiChannel = YansWifiChannelHelper::Default();
   
   wifiPhy.SetChannel(wifiChannel.Create());
-//  wifiPhy.Set("TxPowerStart", DoubleValue(maxPower));
-//  wifiPhy.Set("TxPowerEnd", DoubleValue(maxPower));
+  wifiPhy.Set("TxPowerStart", DoubleValue(maxPower));
+  wifiPhy.Set("TxPowerEnd", DoubleValue(maxPower));
  
   WifiHelper wifi;
   wifi.SetRemoteStationManager("ns3::ConstantRateWifiManager",
